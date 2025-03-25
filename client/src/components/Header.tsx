@@ -58,7 +58,11 @@ export default function Header() {
   ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled 
+        ? 'bg-[#0a1128]/80 backdrop-blur-md shadow-lg border-b border-[#1e2a45]' 
+        : 'bg-transparent'
+    }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <nav className="flex items-center justify-between py-4">
           <a 
@@ -67,7 +71,7 @@ export default function Header() {
             onClick={() => handleNavClick("home")}
           >
             <span className="text-primary">F</span>
-            <span className={`${scrolled ? 'text-gray-800' : 'text-white'}`}>aisal</span>
+            <span className="text-white">aisal</span>
           </a>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -75,7 +79,7 @@ export default function Header() {
               <a 
                 key={item.id}
                 href={`#${item.id}`} 
-                className={`nav-link ${scrolled ? 'text-gray-700' : 'text-gray-100'} hover:text-primary transition-colors relative text-sm font-medium`}
+                className="nav-link text-gray-200 hover:text-primary transition-colors relative text-sm font-medium"
                 onClick={() => handleNavClick(item.id)}
               >
                 {item.label}
@@ -90,7 +94,7 @@ export default function Header() {
           </div>
           
           <button 
-            className={`md:hidden ${scrolled ? 'text-gray-800' : 'text-white'} hover:text-primary focus:outline-none`}
+            className="md:hidden text-white hover:text-primary focus:outline-none"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
@@ -104,14 +108,16 @@ export default function Header() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="md:hidden py-4 bg-white rounded-lg shadow-lg"
+            className="md:hidden py-4 bg-[#0a1128]/90 backdrop-blur-md rounded-lg shadow-lg border border-[#1e2a45]"
           >
             <div className="flex flex-col space-y-3">
               {navItems.map((item) => (
                 <a 
                   key={item.id}
                   href={`#${item.id}`} 
-                  className={`py-2 px-4 text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors ${activeSection === item.id ? 'text-primary font-medium' : ''}`}
+                  className={`py-2 px-4 text-gray-300 hover:text-primary hover:bg-[#1e2a45]/50 transition-colors ${
+                    activeSection === item.id ? 'text-primary font-medium' : ''
+                  }`}
                   onClick={() => handleNavClick(item.id)}
                 >
                   {item.label}

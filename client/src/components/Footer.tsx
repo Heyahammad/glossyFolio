@@ -4,8 +4,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-gray-900 text-white py-10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="relative bg-[#060D21] text-white py-10 overflow-hidden">
+      {/* Background gradient blur effects */}
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl opacity-20"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-indigo-600/10 rounded-full filter blur-3xl opacity-20"></div>
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <a href="#home" className="text-2xl font-bold font-poppins text-white mb-4 inline-block">
@@ -47,31 +51,34 @@ export default function Footer() {
             
             <div className="flex space-x-4 mt-6">
               <motion.a 
-                whileHover={{ y: -5, color: "#4F46E5" }}
+                whileHover={{ y: -5, scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
                 href="https://github.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-gray-800 text-gray-300 hover:text-primary transition-colors w-10 h-10 rounded-full flex items-center justify-center"
+                className="bg-[#0f1631]/80 backdrop-blur-sm border border-[#1e2a45] text-gray-300 hover:text-primary transition-all w-10 h-10 rounded-full flex items-center justify-center"
               >
                 <i className="fab fa-github"></i>
               </motion.a>
               
               <motion.a 
-                whileHover={{ y: -5, color: "#4F46E5" }}
+                whileHover={{ y: -5, scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
                 href="https://linkedin.com/in/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-gray-800 text-gray-300 hover:text-primary transition-colors w-10 h-10 rounded-full flex items-center justify-center"
+                className="bg-[#0f1631]/80 backdrop-blur-sm border border-[#1e2a45] text-gray-300 hover:text-primary transition-all w-10 h-10 rounded-full flex items-center justify-center"
               >
                 <i className="fab fa-linkedin-in"></i>
               </motion.a>
               
               <motion.a 
-                whileHover={{ y: -5, color: "#4F46E5" }}
+                whileHover={{ y: -5, scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
                 href="https://twitter.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-gray-800 text-gray-300 hover:text-primary transition-colors w-10 h-10 rounded-full flex items-center justify-center"
+                className="bg-[#0f1631]/80 backdrop-blur-sm border border-[#1e2a45] text-gray-300 hover:text-primary transition-all w-10 h-10 rounded-full flex items-center justify-center"
               >
                 <i className="fab fa-twitter"></i>
               </motion.a>
@@ -79,7 +86,7 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-[#1e2a45] pt-6 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <p className="text-gray-400">
               &copy; {currentYear} Faisal Ahammad. All rights reserved.
