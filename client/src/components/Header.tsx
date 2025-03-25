@@ -1,15 +1,23 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [, setLocation] = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const { isMobile, isTablet } = useIsMobile();
 
   const toggleMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+    // Prevent scrolling when menu is open
+    if (!mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
   };
 
   useEffect(() => {
@@ -40,22 +48,81 @@ export default function Header() {
     };
     
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      // Reset overflow when component unmounts
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+  // Handle ESC key to close mobile menu
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        document.body.style.overflow = 'auto';
+      }
+    };
+    
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
   const handleNavClick = (sectionId: string) => {
     setActiveSection(sectionId);
     setMobileMenuOpen(false);
+    document.body.style.overflow = 'auto';
   };
 
   const navItems = [
-    { id: "home", label: "Home" },
-    { id: "about", label: "About" },
-    { id: "skills", label: "Skills" },
-    { id: "education", label: "Education" },
-    { id: "projects", label: "Projects" },
-    { id: "contact", label: "Contact" }
+    { id: "home", label: "Home", icon: "fas fa-home" },
+    { id: "about", label: "About", icon: "fas fa-user" },
+    { id: "skills", label: "Skills", icon: "fas fa-code" },
+    { id: "education", label: "Education", icon: "fas fa-graduation-cap" },
+    { id: "projects", label: "Projects", icon: "fas fa-briefcase" },
+    { id: "contact", label: "Contact", icon: "fas fa-envelope" }
   ];
+
+  // Close menu when screen size changes to desktop
+  useEffect(() => {
+    if (!isMobile && mobileMenuOpen) {
+      setMobileMenuOpen(false);
+      document.body.style.overflow = 'auto';
+    }
+  }, [isMobile, mobileMenuOpen]);
+
+  // Variants for animation
+  const menuVariants = {
+    closed: {
+      opacity: 0,
+      x: "100%",
+      transition: {
+        type: "tween",
+        duration: 0.35,
+        ease: "easeInOut",
+        when: "afterChildren",
+        staggerChildren: 0.05,
+        staggerDirection: -1
+      }
+    },
+    open: {
+      opacity: 1,
+      x: "0%",
+      transition: {
+        type: "tween",
+        duration: 0.45,
+        ease: "easeInOut",
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    closed: { opacity: 0, x: 20 },
+    open: { opacity: 1, x: 0 }
+  };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -74,6 +141,7 @@ export default function Header() {
             <span className="text-white">aisal</span>
           </a>
           
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <a 
@@ -93,40 +161,103 @@ export default function Header() {
             ))}
           </div>
           
+          {/* Mobile Menu Button */}
           <button 
-            className="md:hidden text-white hover:text-primary focus:outline-none"
+            className="md:hidden text-white hover:text-primary focus:outline-none z-50 relative"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
-            <i className="fas fa-bars text-xl"></i>
+            {mobileMenuOpen ? (
+              <motion.i 
+                initial={{ rotate: 0 }}
+                animate={{ rotate: 90 }}
+                transition={{ duration: 0.3 }}
+                className="fas fa-times text-2xl"
+              />
+            ) : (
+              <motion.i 
+                className="fas fa-bars text-xl"
+              />
+            )}
           </button>
         </nav>
-        
-        {/* Mobile Menu */}
+      </div>
+      
+      {/* Full Screen Mobile Menu */}
+      <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="md:hidden py-4 bg-[#0a1128]/90 backdrop-blur-md rounded-lg shadow-lg border border-[#1e2a45]"
+            variants={menuVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="fixed inset-0 bg-[#0a1128]/95 backdrop-blur-xl flex flex-col items-center justify-center z-40 md:hidden"
           >
-            <div className="flex flex-col space-y-3">
-              {navItems.map((item) => (
-                <a 
-                  key={item.id}
-                  href={`#${item.id}`} 
-                  className={`py-2 px-4 text-gray-300 hover:text-primary hover:bg-[#1e2a45]/50 transition-colors ${
-                    activeSection === item.id ? 'text-primary font-medium' : ''
-                  }`}
-                  onClick={() => handleNavClick(item.id)}
-                >
-                  {item.label}
-                </a>
-              ))}
+            <div className="w-full max-w-sm mx-auto px-4">
+              <div className="flex flex-col items-center space-y-8">
+                {navItems.map((item) => (
+                  <motion.div 
+                    key={item.id}
+                    variants={itemVariants}
+                    className="w-full"
+                  >
+                    <a 
+                      href={`#${item.id}`} 
+                      className={`flex items-center py-3 px-4 text-xl font-medium transition-all duration-300 rounded-lg border border-transparent
+                        ${activeSection === item.id 
+                          ? 'text-primary border-primary/30 bg-primary/10' 
+                          : 'text-gray-300 hover:text-primary hover:bg-[#1e2a45]/30 hover:border-[#1e2a45]'
+                        }`}
+                      onClick={() => handleNavClick(item.id)}
+                    >
+                      <i className={`${item.icon} w-8 text-center`}></i>
+                      <span className="ml-4">{item.label}</span>
+                      {activeSection === item.id && (
+                        <motion.div 
+                          className="ml-auto"
+                          layoutId="activeMobileIndicator"
+                        >
+                          <i className="fas fa-chevron-right text-primary"></i>
+                        </motion.div>
+                      )}
+                    </a>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <motion.div 
+                variants={itemVariants}
+                className="mt-16 flex justify-center"
+              >
+                <div className="flex space-x-6">
+                  <a 
+                    href="https://github.com/heyahammad" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-primary transition-colors text-xl"
+                  >
+                    <i className="fab fa-github"></i>
+                  </a>
+                  <a 
+                    href="#contact" 
+                    onClick={() => handleNavClick("contact")}
+                    className="text-gray-400 hover:text-primary transition-colors text-xl"
+                  >
+                    <i className="fab fa-linkedin"></i>
+                  </a>
+                  <a 
+                    href="#contact" 
+                    onClick={() => handleNavClick("contact")}
+                    className="text-gray-400 hover:text-primary transition-colors text-xl"
+                  >
+                    <i className="fas fa-envelope"></i>
+                  </a>
+                </div>
+              </motion.div>
             </div>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </header>
   );
 }
