@@ -37,7 +37,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-dark-DEFAULT text-white font-inter">
+    <div className="bg-white text-gray-800 font-inter">
       <Header />
       <main>
         <Hero />
