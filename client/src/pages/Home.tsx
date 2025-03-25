@@ -18,13 +18,16 @@ export default function Home() {
       if (target.tagName === "A" && target.getAttribute("href")?.startsWith("#")) {
         e.preventDefault();
         const href = target.getAttribute("href");
-        if (href) {
-          document.querySelector(href)?.scrollIntoView({
-            behavior: "smooth"
-          });
-          
-          // Update URL without page reload
-          window.history.pushState(null, "", href);
+        if (href && href !== "#") {
+          const targetElement = document.querySelector(href);
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: "smooth"
+            });
+            
+            // Update URL without page reload
+            window.history.pushState(null, "", href);
+          }
         }
       }
     };
